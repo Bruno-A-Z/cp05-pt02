@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Carrinho | Mercado Express</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link th:href="@{/css/app.css}" rel="stylesheet"/>
+</head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<main class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <h1 class="h3 mb-0">🛒 Meu carrinho</h1>
+        <a class="btn btn-outline-primary" th:href="@{/web/itens}">← Continuar comprando</a>
+    </div>
+
+    <div class="alert alert-danger shadow-sm" th:if="${erro}" th:text="${erro}"></div>
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <section class="content-card p-3 p-lg-4">
+                <div th:if="${#lists.isEmpty(linhas)}" class="text-center text-muted py-5">
+                    Seu carrinho está vazio. <a th:href="@{/web/itens}">Ver produtos</a>
+                </div>
+                <div class="table-responsive" th:unless="${#lists.isEmpty(linhas)}">
+                    <table class="table align-middle mb-0">
+                        <thead><tr><th>Produto</th><th class="text-center">Qtd</th><th class="text-end">Subtotal</th><th></th></tr></thead>
+                        <tbody>
+                        <tr th:each="l : ${linhas}">
+                            <td>
+                                <div class="fw-semibold" th:text="${l.item.name}">Produto</div>
+                                <div class="small text-muted" th:text="${'R$ ' + #numbers.formatDecimal(l.item.price, 1, 2) + ' un.'}">R$ 1,00 un.</div>
+                            </td>
+                            <td class="text-center" th:text="${l.quantidade}">1</td>
+                            <td class="text-end fw-semibold" th:text="${'R$ ' + #numbers.formatDecimal(l.subtotal, 1, 2)}">R$ 1,00</td>
+                            <td class="text-end">
+                                <form th:action="@{/carrinho/remover/{id}(id=${l.item.id})}" method="post">
+                                    <button class="btn btn-sm btn-outline-danger" type="submit">Remover</button>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <th colspan="2" class="text-end">Total</th>
+                            <th class="text-end fs-5" th:text="${'R$ ' + #numbers.formatDecimal(total, 1, 2)}">R$ 0,00</th>
+                            <th></th>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <form th:unless="${#lists.isEmpty(linhas)}" th:action="@{/carrinho/limpar}" method="post" class="mt-3">
+                    <button class="btn btn-sm btn-outline-secondary" type="submit">Esvaziar carrinho</button>
+                </form>
+            </section>
+        </div>
+
+        <div class="col-lg-5">
+            <section class="content-card p-3 p-lg-4" th:unless="${#lists.isEmpty(linhas)}">
+                <h2 class="h5">Pagamento — Banco Tranquilo</h2>
+                <p class="text-muted small">A cobrança é enviada ao banco via RabbitMQ. Você receberá um e-mail quando o pagamento for confirmado.</p>
+
+                <form th:action="@{/carrinho/finalizar}" th:object="${checkout}" method="post" autocomplete="off">
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold">Número do cartão</label>
+                        <input type="text" class="form-control" th:field="*{numeroCartao}" placeholder="4111 1111 1111 2222"
+                               th:classappend="${#fields.hasErrors('numeroCartao')} ? 'is-invalid'"/>
+                        <div class="invalid-feedback" th:errors="*{numeroCartao}"></div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold">Nome do titular</label>
+                        <input type="text" class="form-control" th:field="*{nomeTitular}"
+                               th:classappend="${#fields.hasErrors('nomeTitular')} ? 'is-invalid'"/>
+                        <div class="invalid-feedback" th:errors="*{nomeTitular}"></div>
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">Validade</label>
+                            <input type="text" class="form-control" th:field="*{validade}" placeholder="MM/AA"
+                                   th:classappend="${#fields.hasErrors('validade')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback" th:errors="*{validade}"></div>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">CVV</label>
+                            <input type="password" class="form-control" th:field="*{cvv}"
+                                   th:classappend="${#fields.hasErrors('cvv')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback" th:errors="*{cvv}"></div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100 btn-lg">Finalizar compra</button>
+                </form>
+
+                <div class="small text-muted mt-3">
+                    <strong>Cartões de teste:</strong> final <code>0000</code> = saldo insuficiente ·
+                    final <code>1111</code> = cartão bloqueado · qualquer outro = aprovado (limite R$ 5.000).
+                </div>
+            </section>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,21 @@
+CHECKPOINT 5 - JAVA ADVANCED - FIAP TDS
+Turma / Curso: <PREENCHER>
+
+INTEGRANTES
+Bruno A Zanateli     - RM563736
+Christian S Freitas  - RM566098
+Rodrigo Tiezzi       - RM562975
+Pedro P Biasolli     - RM562521
+Matheus Souza        - RM562532
+
+GITHUB (README com descricao, imagens e exemplos): https://github.com/Bruno-A-Z/cp05
+IDE utilizada: IntelliJ IDEA
+
+PARTE 1 - Spring Security MVC
+Deploy: <PREENCHER LINK>
+Sistema de deploy: Render (Web Service com Docker + PostgreSQL)
+
+PARTE 2 - Microsservicos com RabbitMQ
+Video (5 a 7 min, nao listado): <PREENCHER LINK>
+Configuracao do BD e exemplo de requisicao JSON para Postman: ver README.md (secoes
+"Informacoes de configuracao do BD" e "Exemplo de requisicao de compra") e a pasta docs/postman.

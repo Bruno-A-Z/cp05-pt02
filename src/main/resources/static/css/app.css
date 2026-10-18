@@ -1,0 +1,101 @@
+:root {
+    --green-900: #123b2a;
+    --green-700: #1f6f4a;
+    --green-600: #2f8f61;
+    --green-100: #eaf6ef;
+    --cream: #f7f8f5;
+    --ink: #1b2a23;
+}
+
+body {
+    background: linear-gradient(180deg, var(--green-100) 0, var(--cream) 280px);
+    color: var(--ink);
+    min-height: 100vh;
+}
+
+.brand-mark {
+    width: 42px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, .18);
+    font-size: 1.4rem;
+}
+
+.hero {
+    background: linear-gradient(135deg, var(--green-900), var(--green-700));
+    color: #fff;
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow: 0 14px 36px rgba(18, 59, 42, .14);
+}
+
+.metric-card,
+.content-card {
+    background: rgba(255,255,255,.92);
+    border: 1px solid rgba(20, 75, 52, .08);
+    border-radius: 18px;
+    box-shadow: 0 10px 28px rgba(24, 57, 44, .07);
+}
+
+.metric-card {
+    padding: 20px;
+}
+
+.metric-value {
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: var(--green-700);
+}
+
+.table thead th {
+    white-space: nowrap;
+}
+
+.badge-sector {
+    background: var(--green-100);
+    color: var(--green-900);
+}
+
+.btn-success {
+    background-color: var(--green-700);
+    border-color: var(--green-700);
+}
+
+.btn-success:hover,
+.btn-success:focus {
+    background-color: var(--green-900);
+    border-color: var(--green-900);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--green-600);
+    box-shadow: 0 0 0 .2rem rgba(47, 143, 97, .13);
+}
+
+.footer {
+    color: #6c7a72;
+}
+
+.admin-link-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    height: 100%;
+    padding: 20px;
+    border-radius: 18px;
+    background: var(--green-100);
+    color: var(--green-900);
+    text-decoration: none;
+    border: 1px solid rgba(20, 75, 52, .08);
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.admin-link-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(24, 57, 44, .12);
+    color: var(--green-900);
+}

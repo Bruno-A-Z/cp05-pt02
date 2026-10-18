@@ -1,0 +1,11 @@
+{
+  "itens": [
+    { "itemId": 1, "quantidade": 2 },
+    { "itemId": 3, "quantidade": 1 }
+  ],
+  "cartao": {
+    "numero": "4111 1111 1111 2222",
+    "titular": "Cliente Teste",
+    "validade": "12/30"
+  }
+}

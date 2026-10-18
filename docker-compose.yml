@@ -1,0 +1,39 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: mercadoexpress
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  mailpit:
+    image: axllent/mailpit
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+  # app:
+  #   build: .
+  #   ports: ["8082:8082"]
+  #   environment:
+  #     DB_URL: jdbc:postgresql://postgres:5432/mercadoexpress
+  #     DB_USER: postgres
+  #     DB_PASSWORD: postgres
+  #     RABBITMQ_HOST: rabbitmq
+  #     MAIL_ENABLED: "true"
+  #     MAIL_HOST: mailpit
+  #     MAIL_PORT: "1025"
+  #   depends_on: [postgres, rabbitmq, mailpit]
+
+volumes:
+  pgdata:

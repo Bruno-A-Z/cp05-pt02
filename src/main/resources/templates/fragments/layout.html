@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<nav th:fragment="nav" class="navbar navbar-expand-lg navbar-dark" style="background:#123b2a;">
+    <div class="container py-2">
+        <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" th:href="@{/}">
+            <span class="brand-mark">🛒</span>
+            <span>Mercado Express</span>
+        </a>
+
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <a class="btn btn-sm btn-outline-light" th:if="${autenticado}" th:href="@{/web/itens}">Produtos</a>
+            <a class="btn btn-sm btn-outline-light" th:if="${admin}" th:href="@{/admin}">Painel</a>
+            <a class="btn btn-sm btn-outline-light" th:if="${admin}" th:href="@{/admin/dashboard}">Dashboard</a>
+            <a class="btn btn-sm btn-outline-light" th:if="${autenticado}" th:href="@{/pedidos}">Meus pedidos</a>
+            <a class="btn btn-sm btn-warning position-relative" th:if="${autenticado}" th:href="@{/carrinho}">
+                🛒 Carrinho <span class="badge text-bg-dark ms-1" th:text="${carrinhoQtd}">0</span>
+            </a>
+            <a class="btn btn-sm btn-outline-light" th:if="${autenticado and !admin}" th:href="@{/cliente}">Minha área</a>
+            <a class="btn btn-sm btn-light" th:if="${admin}" th:href="@{/web/itens/novo}">+ Novo produto</a>
+
+            <span class="text-white small ms-1" th:if="${autenticado}">
+                Olá, <strong th:text="${usuarioLogado}">usuario</strong>
+                <span class="badge text-bg-light ms-1" th:text="${admin} ? 'ADMIN' : 'USER'">USER</span>
+            </span>
+
+            <form th:if="${autenticado}" th:action="@{/logout}" method="post" class="d-inline">
+                <button type="submit" class="btn btn-sm btn-outline-light">Sair</button>
+            </form>
+
+            <a th:unless="${autenticado}" class="btn btn-sm btn-outline-light" th:href="@{/req/login}">Entrar</a>
+            <a th:unless="${autenticado}" class="btn btn-sm btn-light" th:href="@{/req/cadastro}">Criar conta</a>
+        </div>
+    </div>
+</nav>
+
+<footer th:fragment="footer" class="container text-center py-4 footer small">
+    Amazin — Mercado Express · CP5 · Spring Boot + Spring Security + PostgreSQL + RabbitMQ
+</footer>
+
+</body>
+</html>

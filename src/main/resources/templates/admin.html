@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Painel Administrativo | Mercado Express</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/app.css}" rel="stylesheet">
+</head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<main class="container py-5">
+    <div class="content-card p-4 p-lg-5">
+        <span class="badge badge-sector mb-3">ÁREA PROTEGIDA · ADMIN</span>
+        <h1 class="h2 fw-bold">Painel Administrativo</h1>
+        <p class="text-muted">Usuário autenticado: <strong th:text="${usuarioLogado}">admin</strong></p>
+
+        <div class="row g-3 mt-3">
+            <div class="col-md-4">
+                <a th:href="@{/web/itens}" class="admin-link-card">
+                    <span class="fs-2">📦</span>
+                    <strong>Gerenciar produtos</strong>
+                    <small>Consultar, editar e excluir produtos.</small>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a th:href="@{/web/itens/novo}" class="admin-link-card">
+                    <span class="fs-2">➕</span>
+                    <strong>Novo produto</strong>
+                    <small>Cadastrar um produto no PostgreSQL.</small>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a th:href="@{/admin/dashboard}" class="admin-link-card">
+                    <span class="fs-2">📊</span>
+                    <strong>Dashboard gerencial</strong>
+                    <small>Vendas, lucro, estoque e pedidos.</small>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a th:href="@{/admin/pedidos}" class="admin-link-card">
+                    <span class="fs-2">🧾</span>
+                    <strong>Pedidos</strong>
+                    <small>Todas as compras e status do pagamento.</small>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a th:href="@{/admin/emails}" class="admin-link-card">
+                    <span class="fs-2">📧</span>
+                    <strong>E-mails enviados</strong>
+                    <small>Controle de e-mails para os clientes.</small>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a th:href="@{/swagger-ui/index.html}" class="admin-link-card">
+                    <span class="fs-2">🔗</span>
+                    <strong>API REST</strong>
+                    <small>Documentação dos endpoints.</small>
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

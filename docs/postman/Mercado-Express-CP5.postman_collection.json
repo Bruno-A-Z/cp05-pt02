@@ -1,0 +1,323 @@
+{
+  "info": {
+    "name": "Mercado Express CP5 - Compras e Banco Tranquilo",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Teste da integração Mercado Express -> RabbitMQ -> Banco Tranquilo -> e-mail. Autenticação HTTP Basic (usuário admin criado na inicialização, ou qualquer usuário cadastrado)."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8082"
+    },
+    {
+      "key": "pedidoId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Listar produtos",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/item",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "item"
+          ]
+        },
+        "description": "",
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "username",
+              "value": "admin"
+            },
+            {
+              "key": "password",
+              "value": "admin123"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "2. Compra APROVADA (cartão final 2222)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/compras",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "compras"
+          ]
+        },
+        "description": "",
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "username",
+              "value": "admin"
+            },
+            {
+              "key": "password",
+              "value": "admin123"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"itens\": [\n    {\n      \"itemId\": 1,\n      \"quantidade\": 2\n    },\n    {\n      \"itemId\": 3,\n      \"quantidade\": 1\n    }\n  ],\n  \"cartao\": {\n    \"numero\": \"4111 1111 1111 2222\",\n    \"titular\": \"Cliente Teste\",\n    \"validade\": \"12/30\"\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "3. Compra RECUSADA - saldo insuficiente (final 0000)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/compras",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "compras"
+          ]
+        },
+        "description": "",
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "username",
+              "value": "admin"
+            },
+            {
+              "key": "password",
+              "value": "admin123"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"itens\": [\n    {\n      \"itemId\": 2,\n      \"quantidade\": 1\n    }\n  ],\n  \"cartao\": {\n    \"numero\": \"4111 1111 1111 0000\",\n    \"titular\": \"Cliente Teste\",\n    \"validade\": \"12/30\"\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "4. Compra RECUSADA - cartão bloqueado (final 1111)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/compras",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "compras"
+          ]
+        },
+        "description": "",
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "username",
+              "value": "admin"
+            },
+            {
+              "key": "password",
+              "value": "admin123"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"itens\": [\n    {\n      \"itemId\": 2,\n      \"quantidade\": 1\n    }\n  ],\n  \"cartao\": {\n    \"numero\": \"4111 1111 1111 1111\",\n    \"titular\": \"Cliente Teste\",\n    \"validade\": \"12/30\"\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "5. Compra com estoque insuficiente (422)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/compras",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "compras"
+          ]
+        },
+        "description": "",
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "username",
+              "value": "admin"
+            },
+            {
+              "key": "password",
+              "value": "admin123"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"itens\": [\n    {\n      \"itemId\": 1,\n      \"quantidade\": 9999\n    }\n  ],\n  \"cartao\": {\n    \"numero\": \"4111 1111 1111 2222\",\n    \"titular\": \"Cliente Teste\",\n    \"validade\": \"12/30\"\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "6. Consultar status do pedido",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/compras/{{pedidoId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "compras",
+            "{{pedidoId}}"
+          ]
+        },
+        "description": "",
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "username",
+              "value": "admin"
+            },
+            {
+              "key": "password",
+              "value": "admin123"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "7. Dados do dashboard (ADMIN)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/admin/dashboard/dados",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "admin",
+            "dashboard",
+            "dados"
+          ]
+        },
+        "description": "",
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "username",
+              "value": "admin"
+            },
+            {
+              "key": "password",
+              "value": "admin123"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "8. Chamar a API do Banco Tranquilo direto",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-API-KEY",
+            "value": "banco-tranquilo-key"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/banco-tranquilo/api/pagamentos",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "banco-tranquilo",
+            "api",
+            "pagamentos"
+          ]
+        },
+        "description": "",
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"transactionId\": \"teste-001\",\n  \"valor\": 150.0,\n  \"numeroCartao\": \"4111111111112222\",\n  \"nomeTitular\": \"Cliente Teste\"\n}"
+        }
+      }
+    }
+  ]
+}

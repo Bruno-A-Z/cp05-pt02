@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Dashboard | Mercado Express</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link th:href="@{/css/app.css}" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<main class="container py-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <div>
+            <h1 class="h3 mb-0">Dashboard da gerência</h1>
+            <div class="text-muted small">Atualiza automaticamente a cada 5 segundos · <span id="atualizado">—</span></div>
+        </div>
+        <div class="d-flex gap-2">
+            <a class="btn btn-outline-primary" th:href="@{/admin/pedidos}">Pedidos</a>
+            <a class="btn btn-outline-secondary" th:href="@{/admin/emails}">E-mails</a>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3"><div class="metric-card h-100"><div class="text-muted small">Receita (aprovados)</div><div class="metric-value" id="k-receita">—</div></div></div>
+        <div class="col-6 col-lg-3"><div class="metric-card h-100"><div class="text-muted small">Lucro</div><div class="metric-value" id="k-lucro">—</div></div></div>
+        <div class="col-6 col-lg-3"><div class="metric-card h-100"><div class="text-muted small">Pedidos aprovados</div><div class="metric-value" id="k-aprovados">—</div></div></div>
+        <div class="col-6 col-lg-3"><div class="metric-card h-100"><div class="text-muted small">Ticket médio</div><div class="metric-value" id="k-ticket">—</div></div></div>
+        <div class="col-6 col-lg-3"><div class="metric-card h-100"><div class="text-muted small">Pendentes</div><div class="metric-value" id="k-pendentes">—</div></div></div>
+        <div class="col-6 col-lg-3"><div class="metric-card h-100"><div class="text-muted small">Recusados / erro</div><div class="metric-value" id="k-recusados">—</div></div></div>
+        <div class="col-6 col-lg-3"><div class="metric-card h-100"><div class="text-muted small">Itens vendidos</div><div class="metric-value" id="k-itens">—</div></div></div>
+        <div class="col-6 col-lg-3"><div class="metric-card h-100"><div class="text-muted small">E-mails registrados</div><div class="metric-value" id="k-emails">—</div></div></div>
+    </div>
+
+    <div class="alert alert-warning" id="alerta-estoque" style="display:none;"></div>
+
+    <div class="row g-3">
+        <div class="col-lg-8"><section class="content-card p-3"><h2 class="h6">Vendas e lucro por dia (R$)</h2><div style="height:280px"><canvas id="c-dia"></canvas></div></section></div>
+        <div class="col-lg-4"><section class="content-card p-3"><h2 class="h6">Status dos pedidos</h2><div style="height:280px"><canvas id="c-status"></canvas></div></section></div>
+        <div class="col-lg-6"><section class="content-card p-3"><h2 class="h6">Estoque por produto</h2><div style="height:280px"><canvas id="c-estoque"></canvas></div></section></div>
+        <div class="col-lg-3"><section class="content-card p-3"><h2 class="h6">Receita por setor (R$)</h2><div style="height:280px"><canvas id="c-setor"></canvas></div></section></div>
+        <div class="col-lg-3"><section class="content-card p-3"><h2 class="h6">Mais vendidos (un.)</h2><div style="height:280px"><canvas id="c-top"></canvas></div></section></div>
+    </div>
+
+    <section class="content-card p-3 p-lg-4 mt-4">
+        <h2 class="h5">Últimas compras</h2>
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead><tr><th>Pedido</th><th>Cliente</th><th>Data</th><th>Total</th><th>Status</th></tr></thead>
+                <tbody id="t-pedidos"><tr><td colspan="5" class="text-muted text-center py-4">Carregando...</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<script th:inline="javascript">
+    const URL_DADOS = /*[[@{/admin/dashboard/dados}]]*/ '/admin/dashboard/dados';
+    const brl = v => 'R$ ' + Number(v || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    const cores = ['#1f6f4a', '#2f8f61', '#f0ad4e', '#0d6efd', '#6f42c1', '#dc3545', '#20c997'];
+    const charts = {};
+
+    function desenhar(id, config) {
+        if (charts[id]) {
+            charts[id].data = config.data;
+            charts[id].update();
+        } else {
+            charts[id] = new Chart(document.getElementById(id), config);
+        }
+    }
+    const opts = {responsive: true, maintainAspectRatio: false};
+
+    function set(id, texto) { document.getElementById(id).textContent = texto; }
+
+    function render(d) {
+        const k = d.kpis;
+        set('k-receita', brl(k.receita));
+        set('k-lucro', brl(k.lucro));
+        set('k-aprovados', k.pedidosAprovados);
+        set('k-ticket', brl(k.ticketMedio));
+        set('k-pendentes', k.pedidosPendentes);
+        set('k-recusados', k.pedidosRecusados);
+        set('k-itens', k.itensVendidos);
+        set('k-emails', k.emailsRegistrados);
+        set('atualizado', 'atualizado às ' + new Date().toLocaleTimeString('pt-BR'));
+
+        const alerta = document.getElementById('alerta-estoque');
+        if (d.estoqueBaixo.length) {
+            alerta.style.display = 'block';
+            alerta.textContent = '⚠️ Estoque baixo: ' + d.estoqueBaixo.join(', ');
+        } else {
+            alerta.style.display = 'none';
+        }
+
+        desenhar('c-dia', {type: 'line', options: opts, data: {labels: d.diasLabels, datasets: [
+            {label: 'Receita', data: d.receitaPorDia, borderColor: cores[0], backgroundColor: cores[0], tension: .25},
+            {label: 'Lucro', data: d.lucroPorDia, borderColor: cores[2], backgroundColor: cores[2], tension: .25}]}});
+        desenhar('c-status', {type: 'doughnut', options: opts, data: {labels: Object.keys(d.statusPedidos),
+            datasets: [{data: Object.values(d.statusPedidos), backgroundColor: ['#f0ad4e', '#1f6f4a', '#dc3545', '#6c757d']}]}});
+        desenhar('c-estoque', {type: 'bar', options: opts, data: {labels: d.estoqueLabels,
+            datasets: [{label: 'Unidades em estoque', data: d.estoqueValores, backgroundColor: cores[1]}]}});
+        desenhar('c-setor', {type: 'doughnut', options: opts, data: {labels: d.setorLabels,
+            datasets: [{data: d.receitaPorSetor, backgroundColor: cores}]}});
+        desenhar('c-top', {type: 'bar', options: {...opts, indexAxis: 'y'}, data: {labels: d.topLabels,
+            datasets: [{label: 'Unidades', data: d.topQuantidades, backgroundColor: cores[3]}]}});
+
+        const corpo = document.getElementById('t-pedidos');
+        corpo.innerHTML = '';
+        if (!d.ultimosPedidos.length) {
+            corpo.innerHTML = '<tr><td colspan="5" class="text-muted text-center py-4">Nenhuma compra ainda.</td></tr>';
+        }
+        d.ultimosPedidos.forEach(p => {
+            const cls = p.status === 'APROVADO' ? 'text-bg-success' : (p.status === 'PENDENTE' ? 'text-bg-warning' : 'text-bg-danger');
+            const tr = document.createElement('tr');
+            [('#' + p.id), p.cliente, p.data, brl(p.total)].forEach(txt => {
+                const td = document.createElement('td'); td.textContent = txt; tr.appendChild(td);
+            });
+            const td = document.createElement('td');
+            const b = document.createElement('span'); b.className = 'badge rounded-pill ' + cls; b.textContent = p.status;
+            td.appendChild(b); tr.appendChild(td);
+            corpo.appendChild(tr);
+        });
+    }
+
+    async function carregar() {
+        try {
+            const r = await fetch(URL_DADOS, {headers: {'Accept': 'application/json'}, credentials: 'same-origin'});
+            if (r.ok) { render(await r.json()); }
+        } catch (e) { console.error('Falha ao carregar dashboard', e); }
+    }
+    carregar();
+    setInterval(carregar, 5000);
+</script>
+</body>
+</html>
