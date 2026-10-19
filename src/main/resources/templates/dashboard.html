@@ -96,16 +96,16 @@
         }
 
         desenhar('c-dia', {type: 'line', options: opts, data: {labels: d.diasLabels, datasets: [
-            {label: 'Receita', data: d.receitaPorDia, borderColor: cores[0], backgroundColor: cores[0], tension: .25},
-            {label: 'Lucro', data: d.lucroPorDia, borderColor: cores[2], backgroundColor: cores[2], tension: .25}]}});
+                    {label: 'Receita', data: d.receitaPorDia, borderColor: cores[0], backgroundColor: cores[0], tension: .25},
+                    {label: 'Lucro', data: d.lucroPorDia, borderColor: cores[2], backgroundColor: cores[2], tension: .25}]}});
         desenhar('c-status', {type: 'doughnut', options: opts, data: {labels: Object.keys(d.statusPedidos),
-            datasets: [{data: Object.values(d.statusPedidos), backgroundColor: ['#f0ad4e', '#1f6f4a', '#dc3545', '#6c757d']}]}});
+                datasets: [{data: Object.values(d.statusPedidos), backgroundColor: ['#f0ad4e', '#1f6f4a', '#dc3545', '#6c757d']}]}});
         desenhar('c-estoque', {type: 'bar', options: opts, data: {labels: d.estoqueLabels,
-            datasets: [{label: 'Unidades em estoque', data: d.estoqueValores, backgroundColor: cores[1]}]}});
+                datasets: [{label: 'Unidades em estoque', data: d.estoqueValores, backgroundColor: cores[1]}]}});
         desenhar('c-setor', {type: 'doughnut', options: opts, data: {labels: d.setorLabels,
-            datasets: [{data: d.receitaPorSetor, backgroundColor: cores}]}});
+                datasets: [{data: d.receitaPorSetor, backgroundColor: cores}]}});
         desenhar('c-top', {type: 'bar', options: {...opts, indexAxis: 'y'}, data: {labels: d.topLabels,
-            datasets: [{label: 'Unidades', data: d.topQuantidades, backgroundColor: cores[3]}]}});
+                datasets: [{label: 'Unidades', data: d.topQuantidades, backgroundColor: cores[3]}]}});
 
         const corpo = document.getElementById('t-pedidos');
         corpo.innerHTML = '';
@@ -115,7 +115,7 @@
         d.ultimosPedidos.forEach(p => {
             const cls = p.status === 'APROVADO' ? 'text-bg-success' : (p.status === 'PENDENTE' ? 'text-bg-warning' : 'text-bg-danger');
             const tr = document.createElement('tr');
-            [('#' + p.id), p.cliente, p.data, brl(p.total)].forEach(txt => {
+            ['#' + p.id, p.cliente, p.data, brl(p.total)].forEach(txt => {
                 const td = document.createElement('td'); td.textContent = txt; tr.appendChild(td);
             });
             const td = document.createElement('td');
